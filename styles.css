@@ -1,0 +1,43 @@
+body {
+    background: #101515;
+}
+
+#glslCanvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.blank {}
+
+#credits {
+    position: absolute; 
+    bottom: 10px; 
+    right: 15px; 
+    text-align: right;
+    background: rgba(0,0,0,.5);
+    padding: 12px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin: 0px
+}
+
+.label {
+    color: white;
+    font-family: Helvetica, Arial, sans-serif;
+    text-decoration: none; 
+    line-height: 0.0;
+}
+
+#title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+#author {
+    font-size: 14px; 
+    font-style: italic;
+    font-weight: 100;
+}
+
