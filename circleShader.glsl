@@ -14,13 +14,12 @@ void main() {
 
 
   float d = length(uv);
-//
-//    d -= 0.5;
-//    d = abs(d);
-//    
-//    d = smoothstep(0.0, 0.1, d);
-//
-//    gl_FragColor = vec4(vec3(d), 1.0);
-  gl_FragColor = vec4(d, u_mouse.x/u_resolution.x, u_mouse.y/u_resolution.y, 1.0);
+  d -= 0.5;
+  d = abs(d);
+  d = step(0.1, d);
+//d = smoothstep(0.0, 0.1, d);
+
+  //gl_FragColor = vec4(d, u_mouse.x/u_resolution.x, u_mouse.y/u_resolution.y, 1.0);
+  gl_FragColor = vec4(d, d, d, 1.0);
 }
 
