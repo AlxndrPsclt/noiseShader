@@ -24,10 +24,10 @@ function load(url) {
         })
         .then(function(content) {
             sandbox.load(content);
-            document.getElementById("title").innerHTML = "Circle Shader";
+            document.getElementById("title").innerHTML = "Noise Shader";
             document.getElementById("author").innerHTML = "Simulated Generation";
         })
 }
 
-load('circleShader.glsl');
+load('noiseShader.glsl');
 
