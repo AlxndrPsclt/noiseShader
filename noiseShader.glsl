@@ -13,11 +13,12 @@ const float lineBluriness = 0.3;
 
 const float DEFAULT_RANDOM_FROM_FLOAT_PARAM = 502000.0;
 const vec2 DEFAULT_RANDOM_FROM_VEC2_PARAM = vec2(0.840,0.290);
+const float DEFAULT_SCANLINE_SPEED = 50.0;
 
 // draw line function
-float drawLine(float time, float uvX, float numberOfColumns) {
-  float scannerLineX = mod(scanlineSpeed * u_time, numberOfColumns);
-  return 1.0 - smoothstep(lineThickness, lineBluriness, abs(scannerLineX - uvX));
+vec2 drawScanline(float scanlineSpeed, float uvX, float numberOfColumns) {
+  float scanlineX = mod(scanlineSpeed * u_time, numberOfColumns);
+  return vec2(1.0 - smoothstep(lineThickness, lineBluriness, abs(scanlineX - uvX)), scanlineX);
 }
 
 
@@ -48,21 +49,37 @@ void main() {
   float scrollColumnNumberY = floor(u_time * randomY * 100.0);
 
   float randomVal = randomFromVec2(vec2(floorUV.x - scrollColumnNumberY, floorUV.y), DEFAULT_RANDOM_FROM_VEC2_PARAM, 4002000.0);
-  float stepRandom = step(0.95, randomVal);
+  float cloudPointPixelValue = step(0.95, randomVal);
 
   float scannerLineX = mod(scanlineSpeed * u_time, numberOfColumns);
 
   float pixelOnLine = 1.0 - smoothstep(lineThickness, lineBluriness, abs(scannerLineX - uv.x));
 
 
-  // Call the drawLine function
-  float pixelOnLine1 = drawLine(u_time, uv.x, numberOfColumns);
-  float pixelOnLine2 = drawLine(u_time + 10.0, uv.x, numberOfColumns); // draw a second line with a different time value
+  // Call the drawScanline function
+  vec2 line1 = drawScanline(DEFAULT_SCANLINE_SPEED, uv.x, numberOfColumns);
+  vec2 line2 = drawScanline(DEFAULT_SCANLINE_SPEED * 2.337, uv.x, numberOfColumns); // draw a second line with a different time value
+  float pixelOnLine1 = line1.x;
+  float line1X = line1.y;
+  float pixelOnLine2 = line2.x;
+  float line2X = line2.y;
 
-  vec3 color = vec3(max(pixelOnLine1, pixelOnLine2) + stepRandom, max(pixelOnLine1, pixelOnLine2) + stepRandom, max(pixelOnLine1, pixelOnLine2) + stepRandom);
+  //float showPoints = step(line2X-line1X, uv.x);
+  //
+  bool showPoints=false;
+  if (line2X > line1X) {
+    showPoints = max(line1X, line2X) > uv.x && uv.x > min(line1X, line2X);
+  } else {
+    showPoints = max(line1X, line2X) < uv.x || uv.x < min(line1X, line2X);
+  }
+
+  vec3 color = vec3(
+      pixelOnLine1 + pixelOnLine2 + float(showPoints) * cloudPointPixelValue,
+      max(pixelOnLine1, pixelOnLine2) + float(showPoints) * cloudPointPixelValue,
+      max(pixelOnLine1, pixelOnLine2) + float(showPoints) * cloudPointPixelValue);
 
 
-  //vec3 color = vec3(stepRandom + pixelOnLine, stepRandom + pixelOnLine, stepRandom + pixelOnLine);
+  //vec3 color = vec3(cloudPointPixelValue + pixelOnLine, cloudPointPixelValue + pixelOnLine, cloudPointPixelValue + pixelOnLine);
 
   gl_FragColor = vec4(color, 1.0);
 }
