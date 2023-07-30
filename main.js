@@ -24,9 +24,9 @@ function load(url) {
         })
         .then(function(content) {
             sandbox.load(content);
-            document.getElementById("title").innerHTML = "SpaceStar Shader";
+            document.getElementById("title").innerHTML = "Minimalist Shader";
             document.getElementById("author").innerHTML = "Simulated Generation";
         })
 }
 
-load('spaceStarShader.glsl');
+load('minimalistShader.glsl');
