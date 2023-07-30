@@ -24,9 +24,9 @@ function load(url) {
         })
         .then(function(content) {
             sandbox.load(content);
-            document.getElementById("title").innerHTML = "Noise Shader";
+            document.getElementById("title").innerHTML = "SpaceStar Shader";
             document.getElementById("author").innerHTML = "Simulated Generation";
         })
 }
 
-load('noiseShader.glsl');
+load('spaceStarShader.glsl');
