@@ -9,7 +9,7 @@ uniform float u_time;
 const float SQUARE_COLUMNS = 150.0;
 const float PI = radians(180.0);
 float SURFACE_COLUMNS = floor(max(u_resolution.x, u_resolution.y) / min(u_resolution.x, u_resolution.y) * SQUARE_COLUMNS);
-const float DEFAULT_SCANLINE_SPEED = 50.0;
+const float DEFAULT_SCANLINE_SPEED = 30.0;
 const float lineThickness = 0.1;
 const float lineBluriness = 0.3;
 
@@ -58,23 +58,22 @@ void main() {
   float pixelOnLine1 = drawVerticalLine(position1, uv.x);
   float pixelOnLine2 = drawVerticalLine(position2, uv.x);
 
-  float numberOfLaps = (speed2 - speed1) * u_time / (maxUvX);
+  float numberOfLaps = (speed2 - speed1) * u_time / (floor(maxUvX));
   float numberOfLapsMod2 = mod(floor(numberOfLaps),2.0);
 
   bool showPoints = false;
-  if (numberOfLapsMod2 == 0.0) {
-    if (position1 < position2) {
+  if (position1 <= position2) {
+    if (numberOfLapsMod2 == 0.0) {
       showPoints = position1 < uv.x && uv.x < position2;
     } else {
-      showPoints = uv.x <= position2 || position1 < uv.x;
+      showPoints = uv.x < position1 || position2 < uv.x;
     }
   } else {
-    if (position1 < position2) {
-      showPoints = uv.x < position1 && position2 < uv.x;
+    if (numberOfLapsMod2 == 0.0) {
+      showPoints = uv.x < position2 || position1 < uv.x;
     } else {
-      showPoints = position2 < uv.x || uv.x < position1;
+      showPoints = position2 < uv.x && uv.x < position1;
     }
-
   }
 
   vec3 color = vec3(
