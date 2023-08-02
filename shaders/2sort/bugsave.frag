@@ -6,6 +6,8 @@ uniform vec2 u_resolution;
 uniform float u_time;
 uniform vec2 u_mouse;
 
+const float PI = radians(180.0);
+
 vec2 complexSquare(vec2 z) {
     return vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y);
 }
@@ -27,7 +29,8 @@ float randomFromVec2(vec2 st, vec2 params, float param2) {
 void main() {
     vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
     
-    vec2 c = vec2(0.8 * cos(2.0*randomFromFloat(uv.x, DEFAULT_RANDOM_FROM_FLOAT_PARAM)), 0.8 * sin(2.0*u_mouse.x/u_resolution.x)); // you can play around with these values
+    // de 6 à 12 s
+    vec2 c = vec2(0.8 * cos(2.0*PI*cos(u_time/10.0)), 0.8 * sin(2.0*PI*sin(u_time/10.0))); // you can play around with these values
     vec2 z = uv;
     
     float iterations = 0.0;
@@ -41,6 +44,10 @@ void main() {
     }
 
     // You can also play with the color rendering. Here, I'm using a simple grayscale based on the iteration count.
-    float color = iterations / 100.0;
-    gl_FragColor = vec4(vec3(color), 1.0);
+    float shade = iterations / 100.0;
+
+    vec3 color = vec3(shade, mod(dot(z,z), u_time), 0.0);
+
+    gl_FragColor = vec4(color, 1.0);
+
 }

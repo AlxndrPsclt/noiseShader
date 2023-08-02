@@ -24,9 +24,8 @@ function load(url) {
         })
         .then(function(content) {
             sandbox.load(content);
-            document.getElementById("title").innerHTML = "Julia Shader";
             document.getElementById("author").innerHTML = "Simulated Generation";
         })
 }
 
-load('juliaShaderRami.glsl');
+load('shaders/currentShader.frag');
