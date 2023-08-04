@@ -7,7 +7,7 @@ uniform vec2 u_mouse;
 uniform float u_time;
 
 const float SQUARE_COLUMNS = 100.0;
-const float PI = radians(180.0);
+const float PI = 3.1415926535897932384626433;
 float SURFACE_COLUMNS = floor(max(u_resolution.x, u_resolution.y) / min(u_resolution.x, u_resolution.y) * SQUARE_COLUMNS);
 const float DEFAULT_SCANLINE_SPEED = 30.0;
 const float lineThickness = 0.1;
