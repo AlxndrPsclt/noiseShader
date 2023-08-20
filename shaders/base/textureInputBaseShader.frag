@@ -1,51 +1,32 @@
+
 #ifdef GL_ES
 precision mediump float;
 #endif
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2        u_resolution;
 
-uniform sampler2D u_texture_0;
+uniform sampler2D   u_tex0;
+uniform vec2        u_tex0Resolution;
 
-mat2 rotate2d(float theta)
-{
-    float c = cos(theta);
-    float s = sin(theta);
-    return mat2(
-        c, -s,
-        s, c
-    );
+uniform sampler2D   u_tex1;
+uniform vec2        u_tex1Resolution;
+
+varying vec2        v_texcoord;
+
+void main (void) {
+    vec3 color = vec3(0.0);
+    vec2 pixel = 1.0/u_resolution.xy;
+    vec2 st = gl_FragCoord.xy * pixel;
+    vec2 uv = v_texcoord;
+    float screen_aspect = u_resolution.x/u_resolution.y;
+
+    float tex0_aspect = u_tex0Resolution.x/u_tex0Resolution.y;
+    vec4 tex0 = texture2D(u_tex0, st);
+    color += tex0.rgb * step(0.5, st.x);
+
+    float tex1_aspect = u_tex1Resolution.x/u_tex1Resolution.y;
+    vec4 tex1 = texture2D(u_tex1, st);
+    color += tex1.rgb * step(st.x, 0.5);
+
+    gl_FragColor = vec4(color,1.0);
 }
-
-void main()
-{
-    // Normalized pixel coordinates (from 0 to 1)
-    vec2 uv = gl_FragCoord.xy/u_resolution.xy;
-    //vec3 color = vec3(0.3,0.5,0.7);
-    vec3 color = vec3(0.0,0.0,0.0);
-    //uv = uv + 1.0;
-    //uv.x *= u_resolution.x / u_resolution.y;
-//
-
-    // LAYER01
-    float dist = abs(uv.x + uv.y);
-//
-    vec3 layer00 = texture2D(u_texture_0, uv).xyz;
-    vec3 mask00 = vec3(0.8,0.8,0.8);
-
-
-    vec3 layer01 = dist*(vec3(0.0, 0.0, 0.8));
-    vec3 mask01 = vec3(0.8,0.8,0.8);
-
-
-    // MIX LAYERS
-    color += layer00 * mask00;
-    color += layer01 * mask01;
-
-    gl_FragColor = vec4(color, 1.0);
-}
-
-
-
-    //color = pow(color, vec3(1.0));

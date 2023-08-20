@@ -52,9 +52,9 @@ float particle(vec2 uv, float seed) {
 }
 
 float particleAtPosition(vec2 uv, vec2 position) {
-    float particleSDF = sdCircle(uv, position, 0.00005);
-    float particleSize = 0.00001;
-    float particleLight = 0.01;
+    float particleSDF = sdCircle(uv, position, 0.0005);
+    float particleSize = 0.0001;
+    float particleLight = 0.05;
     float particleValue = (1.0-smoothstep(particleSize,particleSize+particleLight,particleSDF));
     return particleValue;
 }
@@ -84,25 +84,25 @@ void main()
 
 #ifdef DOUBLE_BUFFER_0
 
-    uv*=noise(u_time/5.0);
     color = texture2D(u_doubleBuffer0, uvUnit).rgb;
+
+
+
+//    float particleValue = 0.0;
+//    for(float i = 1.0; i < 100.0; i += 1.0) {
+//      particleValue = particle(uv, i);
+//      color+=particleValue;
+//    }
+
+
+    float particle = particleAtPosition(uv, m);
+
     color *= 0.99;
-
-
-    float particleValue = 0.0;
-    for(float i = 1.0; i < 100.0; i += 1.0) {
-      particleValue = particle(uv, i);
-      color+=particleValue;
-    }
-
-
-    //float particle = particleAtPosition(uv, m);
-
-    //color *= (u_frame <= 1.0)? 0.0 : 1.0; // Clean buffer at startup
+    //particle *= (u_frame <= 1)? 0.0 : 1.0; // Clean buffer at startup
 //    particle = clamp(particle * 0.5 + 0.5, 0.0, 1.0);
 
 
-    //color+=particle;
+    color+=particle;
 
 
     //color+=colorUnit;
