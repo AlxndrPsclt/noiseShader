@@ -22,4 +22,5 @@ tags
 # Persistent undo
 [._]*.un~
 
+shaders/videos/*
 # End of https://www.toptal.com/developers/gitignore/api/vim

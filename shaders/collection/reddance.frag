@@ -20,16 +20,13 @@ uniform sampler2D u_tex0;
 uniform vec2 u_tex0Resolution;
 
 
-float BPM=124.0;
+float BPM=128.0;
 float BPS = BPM/60.0;
 float BEAT_VALUE = u_time * BPS;
 float BEAT_NUMBER = floor(BEAT_VALUE);
 float BEAT = fract(BEAT_VALUE);
 float BEAT2 = fract(BEAT_VALUE * 0.5);
 float BEAT4 = fract(BEAT_VALUE * 0.25);
-float BEAT8 = fract(BEAT_VALUE * 0.125);
-float BEAT16 = fract(BEAT_VALUE * 0.0625);
-float BEAT32 = fract(BEAT_VALUE * 0.03125);
 //float beat = fract(
 
 //uniform sampler2D u_tex0;
@@ -60,9 +57,8 @@ void main()
 
     vec3 colorUnit = vec3(uv.x, uv.y, 0.0);
 
-    vec3 video = texture2D(u_tex0,vec2(1.0-uvUnit.x, uvUnit.y)).rgb;
-    //video = vec3(video.r+video.g+video.b)/3.0;
-    color = video;
+    color = texture2D(u_tex0, uvUnit).rgb;
+    color = vec3(color.r+color.g+color.b)/3.0;
 
 
 
@@ -71,37 +67,24 @@ void main()
 //
 //    //uv/=0.77*noise(u_time/10.0);
       vec3 previousColor = texture2D(u_doubleBuffer0, uvUnit).rgb;
-      vec3 differenceFactor = previousColor - color;
+      float differenceFactor = length(previousColor - color);
     //color *= (0.8);
       //color = vec3(differenceFactor);
 
-      float shift = 0.0;
       // Apply threshold
-      if(differenceFactor.r > 0.2) {  // Adjust the threshold value as needed
-        color += vec3(0.0, 0.0, 0.5); // Red color for movement
+      if(differenceFactor > 0.85) {  // Adjust the threshold value as needed
+        color += vec3(1.0, 0.0, 0.0); // Red color for movement
+      } else {
+        color = color*0.8; // No movement
       }
-      if(differenceFactor.g > 0.2) {  // Adjust the threshold value as needed
-        color += vec3(0.5, 0.0, 0.0); // Red color for movement
-      }
-      if(differenceFactor.b > 0.2) {  // Adjust the threshold value as needed
-        color += vec3(0.0, 0.5, 0.0); // Red color for movement
-      }
-
-//      else {
-//        color = tan(color*1.0); // No movement
-//      }
 
 
     //color =1.0-pow(color,vec3(1.0));
     float lineSDF = 0.0;
 
-    //float numberOfLine=100.0 + smoothstep(0.1,0.9,BEAT16)*1300;
-    float numberOfLine=100.0;
-
-
-    for(float i = 1.0; i < numberOfLine; i += 1.0) {
-      float lineSDF = sdLine(uv, vec2((0.02+0.05*length(differenceFactor))*i - 1.0, 0.0), vec2((0.02+0.05*length(differenceFactor))*i-1.0, 1.0));
-      color -= 1.0 - smoothstep(0.003, 0.006, lineSDF);
+    for(float i = 1.0; i < 100.0; i += 1.0) {
+      float lineSDF = sdLine(uv, vec2(0.02*i - 1.0, 0.0), vec2(0.02*i-1.0, 1.0));
+      color -= 1.0 - smoothstep(0.001, 0.003, lineSDF);
     }
 
 ////
@@ -118,9 +101,7 @@ void main()
 //
 #endif
 
-
-
-    fragColor = vec4(0.2*video+tan(color), 1.0);
+    fragColor = vec4(color, 1.0);
 }
 
     //color = pow(color, vec3(1.0));
